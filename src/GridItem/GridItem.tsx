@@ -6,7 +6,17 @@ type GridItemProps = {
 };
 
 function GridItem({ data }: GridItemProps) {
-  return <div className={styles.gridItem}>{data.label ?? "Grid Item"}</div>;
+  return (
+    <div
+      className={styles.gridItem}
+      style={{
+        gridColumn: data.colSpan ? `span ${data.colSpan}` : undefined,
+        gridRow: data.rowSpan ? `span ${data.rowSpan}` : undefined,
+      }}
+    >
+      {data.render ?? "Grid Item"}
+    </div>
+  );
 }
 
 export default GridItem;

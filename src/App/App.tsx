@@ -1,6 +1,7 @@
 import styles from "./App.module.css";
 import GridNav from "../GridNav/GridNav";
-import { DataType } from "../types";
+import { DataType, LayoutConfigType } from "../types";
+import Child1 from "../Components/Child1/Child1";
 
 const data: DataType[] = [
   {
@@ -37,10 +38,30 @@ const data: DataType[] = [
   },
 ];
 
+const layoutConfig: LayoutConfigType = {
+  1: {
+    render: <Child1 />,
+  },
+  2: {
+    colSpan: 2,
+  },
+  5: {
+    render: <Child1 />,
+  },
+  7: {
+    rowSpan: 2,
+    colSpan: 2,
+  },
+};
+
 function App() {
   return (
     <div className="app">
-      <GridNav data={data} gridClassName={styles.gridClassName} />
+      <GridNav
+        data={data}
+        gridClassName={styles.gridClassName}
+        layoutConfig={layoutConfig}
+      />
     </div>
   );
 }

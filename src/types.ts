@@ -1,4 +1,17 @@
 export interface DataType {
   id: number;
-  [key: string]: string | number | boolean;
+  render?: React.ReactNode;
+  colSpan?: number;
+  rowSpan?: number;
+  [key: string]: string | number | boolean | React.ReactNode | undefined;
 }
+
+export type LayoutItemType = {
+  render?: React.ReactNode;
+  colSpan?: number;
+  rowSpan?: number;
+};
+
+export type LayoutConfigType = {
+  [key: number]: LayoutItemType;
+};
