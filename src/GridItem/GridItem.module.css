@@ -1,3 +1,8 @@
 .gridItem {
-  border: 1px solid red;
+  border: 2px solid aqua;
+
+}
+
+.gridItem.selected {
+  border-color: red;
 }

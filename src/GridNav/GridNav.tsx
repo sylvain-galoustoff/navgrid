@@ -11,6 +11,7 @@ type GridNavProps = {
 
 function GridNav({ data, gridClassName, layoutConfig }: GridNavProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
+  const [selected, setSelected] = useState(1);
 
   useEffect(() => {
     if (layoutConfig) {
@@ -22,11 +23,13 @@ function GridNav({ data, gridClassName, layoutConfig }: GridNavProps) {
         };
       });
       const renderItems = mergeDataConfig.map((item, index) => (
-        <GridItem data={item} key={index} />
+        <GridItem data={item} key={index} itemNumber={index + 1} selected={selected} />
       ));
       setItems(renderItems);
     } else {
-      const renderItems = data.map((item, index) => <GridItem data={item} key={index} />);
+      const renderItems = data.map((item, index) => (
+        <GridItem data={item} key={index} itemNumber={index + 1} selected={selected} />
+      ));
       setItems(renderItems);
     }
   }, [data, layoutConfig]);
