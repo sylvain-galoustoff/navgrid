@@ -1,0 +1,20 @@
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control {
+  border: 1px solid #000;
+  height: 25px;
+  width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.control:hover {
+  border-color: red;
+  color: red;
+}

@@ -2,6 +2,7 @@ import styles from "./App.module.css";
 import GridNav from "../GridNav/GridNav";
 import { DataType, LayoutConfigType } from "../types";
 import Child1 from "../Components/Child1/Child1";
+import GridControls from "../GridControls/GridControls";
 
 const data: DataType[] = [
   {
@@ -61,6 +62,7 @@ function App() {
         data={data}
         gridClassName={styles.gridClassName}
         layoutConfig={layoutConfig}
+        controls={<GridControls />}
       />
     </div>
   );

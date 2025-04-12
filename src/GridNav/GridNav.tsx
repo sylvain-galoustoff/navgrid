@@ -7,11 +7,12 @@ type GridNavProps = {
   data: DataType[];
   gridClassName: keyof typeof styles;
   layoutConfig?: LayoutConfigType;
+  controls?: React.ReactNode;
 };
 
-function GridNav({ data, gridClassName, layoutConfig }: GridNavProps) {
+function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (layoutConfig) {
@@ -34,7 +35,12 @@ function GridNav({ data, gridClassName, layoutConfig }: GridNavProps) {
     }
   }, [data, layoutConfig]);
 
-  return <div className={`${styles.gridNav} ${gridClassName}`}>{items}</div>;
+  return (
+    <div className={`${styles.gridNav} ${gridClassName}`}>
+      {items}
+      {controls && controls}
+    </div>
+  );
 }
 
 export default GridNav;

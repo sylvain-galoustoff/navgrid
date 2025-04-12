@@ -4,7 +4,7 @@ import styles from "./GridItem.module.css";
 type GridItemProps = {
   data: DataType;
   itemNumber: number;
-  selected: number;
+  selected?: number;
 };
 
 function GridItem({ data, itemNumber, selected }: GridItemProps) {
