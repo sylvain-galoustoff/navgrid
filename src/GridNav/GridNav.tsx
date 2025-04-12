@@ -4,13 +4,13 @@ import styles from "./GridNav.module.css";
 
 type GridNavProps = {
   data: DataType[];
-  gridConfig: keyof typeof styles;
+  gridClassName: keyof typeof styles;
 };
 
-function GridNav({ data, gridConfig }: GridNavProps) {
+function GridNav({ data, gridClassName }: GridNavProps) {
   const renderItems = data.map((item, index) => <GridItem data={item} key={index} />);
 
-  return <div className={`${styles.gridNav} ${gridConfig}`}>{renderItems}</div>;
+  return <div className={`${styles.gridNav} ${gridClassName}`}>{renderItems}</div>;
 }
 
 export default GridNav;

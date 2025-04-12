@@ -40,7 +40,7 @@ const data: DataType[] = [
 function App() {
   return (
     <div className="app">
-      <GridNav data={data} gridConfig={styles.gridConfig} />
+      <GridNav data={data} gridClassName={styles.gridClassName} />
     </div>
   );
 }
