@@ -2,6 +2,7 @@ import { JSX, useEffect, useState } from "react";
 import GridItem from "../GridItem/GridItem";
 import { DataType, LayoutConfigType } from "../types";
 import styles from "./GridNav.module.css";
+import { useGridContext } from "../context/GridContext";
 
 type GridNavProps = {
   data: DataType[];
@@ -12,7 +13,7 @@ type GridNavProps = {
 
 function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
-  const [selected, setSelected] = useState<number>(1);
+  const { selected } = useGridContext();
 
   useEffect(() => {
     if (layoutConfig) {
