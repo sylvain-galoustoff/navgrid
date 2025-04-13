@@ -3,6 +3,7 @@ import GridNav from "../GridNav/GridNav";
 import { DataType, LayoutConfigType } from "../types";
 import Child1 from "../Components/Child1/Child1";
 import GridControls from "../GridControls/GridControls";
+import { GridContextProvider } from "../context/GridContext";
 
 const data: DataType[] = [
   {
@@ -58,12 +59,14 @@ const layoutConfig: LayoutConfigType = {
 function App() {
   return (
     <div className="app">
-      <GridNav
-        data={data}
-        gridClassName={styles.gridClassName}
-        layoutConfig={layoutConfig}
-        controls={<GridControls />}
-      />
+      <GridContextProvider>
+        <GridNav
+          data={data}
+          gridClassName={styles.gridClassName}
+          layoutConfig={layoutConfig}
+          controls={<GridControls />}
+        />
+      </GridContextProvider>
     </div>
   );
 }
