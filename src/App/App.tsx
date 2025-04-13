@@ -41,9 +41,6 @@ const data: DataType[] = [
 ];
 
 const layoutConfig: LayoutConfigType = {
-  1: {
-    render: <Child1 />,
-  },
   2: {
     colSpan: 2,
   },

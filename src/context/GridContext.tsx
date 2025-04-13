@@ -1,12 +1,4 @@
-import {
-  JSX,
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { JSX, createContext, useCallback, useContext, useState, ReactNode } from "react";
 import { LayoutConfigType } from "../types";
 
 type DirectionType = "left" | "right" | "up" | "down";
@@ -17,8 +9,9 @@ type GridContextType = {
   changeItem: (direction: DirectionType) => void;
   data: JSX.Element[];
   setData: (items: JSX.Element[]) => void;
+  layoutConfig?: LayoutConfigType;
   setLayoutConfig: (layout: LayoutConfigType) => void;
-  gridMap: number[][];
+  columns: number;
 };
 
 export const GridContext = createContext<GridContextType>({
@@ -27,13 +20,14 @@ export const GridContext = createContext<GridContextType>({
   changeItem: () => {},
   data: [],
   setData: () => {},
+  layoutConfig: {},
   setLayoutConfig: () => {},
-  gridMap: [],
+  columns: 1,
 });
 
 export const GridContextProvider = ({
   children,
-  columns,
+  columns = 3,
 }: {
   children: ReactNode;
   columns: number;
@@ -41,111 +35,117 @@ export const GridContextProvider = ({
   const [selected, setSelected] = useState(1);
   const [data, setData] = useState<JSX.Element[]>([]);
   const [layoutConfig, setLayoutConfig] = useState<LayoutConfigType>({});
-  const [gridMap, setGridMap] = useState<number[][]>([]);
 
-  // Génération de la grille virtuelle
-  useEffect(() => {
-    const map: number[][] = [];
-    const filled = new Map<string, boolean>();
+  const getItemSpan = useCallback(
+    (index: number) => {
+      const id = index + 1;
+      const config = layoutConfig?.[id];
+      return {
+        rowSpan: config?.rowSpan || 1,
+        colSpan: config?.colSpan || 1,
+      };
+    },
+    [layoutConfig]
+  );
 
-    let currentItem = 1;
+  const buildGridMap = useCallback(() => {
+    const gridMap: (number | null)[][] = [];
+    let index = 0;
     let row = 0;
-    let col = 0;
 
-    const isFilled = (r: number, c: number) => filled.get(`${r}-${c}`) === true;
+    while (index < data.length) {
+      if (!gridMap[row]) gridMap[row] = [];
 
-    while (currentItem <= data.length) {
-      const config = layoutConfig?.[currentItem] || {};
-      const colSpan = config.colSpan || 1;
-      const rowSpan = config.rowSpan || 1;
-
-      // Trouver le prochain emplacement libre
-      while (isFilled(row, col)) {
-        col++;
-        if (col >= columns) {
-          col = 0;
-          row++;
+      let col = 0;
+      while (col < columns && index < data.length) {
+        if (gridMap[row][col] != null) {
+          col++;
+          continue;
         }
-      }
 
-      // Vérifier que l’élément peut rentrer
-      if (col + colSpan > columns) {
-        col = 0;
-        row++;
-        continue;
-      }
+        const { rowSpan, colSpan } = getItemSpan(index);
 
-      // Étendre la grille si nécessaire
-      for (let r = row; r < row + rowSpan; r++) {
-        if (!map[r]) map[r] = new Array(columns).fill(undefined);
-        for (let c = col; c < col + colSpan; c++) {
-          map[r][c] = currentItem;
-          filled.set(`${r}-${c}`, true);
+        for (let r = 0; r < rowSpan; r++) {
+          if (!gridMap[row + r]) gridMap[row + r] = [];
+          for (let c = 0; c < colSpan; c++) {
+            gridMap[row + r][col + c] = r === 0 && c === 0 ? index + 1 : null;
+          }
         }
+
+        col += colSpan;
+        index++;
       }
 
-      currentItem++;
-      col++;
-      if (col >= columns) {
-        col = 0;
-        row++;
-      }
+      row++;
     }
 
-    setGridMap(map);
-  }, [data, layoutConfig, columns]);
+    return gridMap;
+  }, [data, columns, getItemSpan]);
 
   const changeItem = useCallback(
     (direction: DirectionType) => {
-      if (!gridMap.length) return;
+      const gridMap = buildGridMap();
 
-      const findCoords = (value: number): [number, number] | null => {
-        for (let y = 0; y < gridMap.length; y++) {
-          const x = gridMap[y].indexOf(value);
-          if (x !== -1) return [x, y];
+      // Trouver la position actuelle
+      let currentRow = -1;
+      let currentCol = -1;
+
+      for (let r = 0; r < gridMap.length; r++) {
+        for (let c = 0; c < gridMap[r].length; c++) {
+          if (gridMap[r][c] === selected) {
+            currentRow = r;
+            currentCol = c;
+            break;
+          }
         }
-        return null;
-      };
+        if (currentRow !== -1) break;
+      }
 
-      const coords = findCoords(selected);
-      if (!coords) return;
-
-      const [x, y] = coords;
-
-      const tryMove = (dx: number, dy: number): number | undefined => {
-        let newX = x + dx;
-        let newY = y + dy;
-        while (newY >= 0 && newY < gridMap.length && newX >= 0 && newX < columns) {
-          const value = gridMap[newY]?.[newX];
-          if (value !== undefined && value !== selected) return value;
-          newX += dx;
-          newY += dy;
-        }
-        return undefined;
-      };
-
-      let next: number | undefined;
+      let newRow = currentRow;
+      let newCol = currentCol;
 
       switch (direction) {
-        case "right":
-          next = tryMove(1, 0) ?? tryMove(-x, 0); // retour au début de la ligne
-          break;
-        case "left":
-          next = tryMove(-1, 0) ?? tryMove(columns - 1 - x, 0); // aller à la fin de la ligne
-          break;
-        case "down":
-          next = tryMove(0, 1);
-          break;
         case "up":
-          next = tryMove(0, -1);
+          do {
+            newRow = newRow - 1 < 0 ? gridMap.length - 1 : newRow - 1;
+          } while (
+            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
+            newRow !== currentRow
+          );
+          break;
+
+        case "down":
+          do {
+            newRow = (newRow + 1) % gridMap.length;
+          } while (
+            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
+            newRow !== currentRow
+          );
+          break;
+
+        case "left":
+          do {
+            newCol = newCol - 1 < 0 ? columns - 1 : newCol - 1;
+          } while (
+            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
+            newCol !== currentCol
+          );
+          break;
+
+        case "right":
+          do {
+            newCol = (newCol + 1) % columns;
+          } while (
+            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
+            newCol !== currentCol
+          );
           break;
       }
 
-      if (next !== undefined) {
-        setSelected(next);
-      }
+      const next = gridMap[newRow]?.[newCol];
+      if (next != null && next !== selected) setSelected(next);
     },
-    [selected, gridMap, columns]
+    [selected, data, columns, buildGridMap]
   );
 
   const valueGridContext = {
@@ -154,8 +154,9 @@ export const GridContextProvider = ({
     changeItem,
     data,
     setData,
+    layoutConfig,
     setLayoutConfig,
-    gridMap,
+    columns,
   };
 
   return <GridContext.Provider value={valueGridContext}>{children}</GridContext.Provider>;
