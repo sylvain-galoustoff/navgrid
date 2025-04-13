@@ -8,50 +8,43 @@ import { GridContextProvider } from "../context/GridContext";
 const data: DataType[] = [
   {
     id: 1,
-    label: "item1",
+    label: "Play",
   },
   {
     id: 2,
-    label: "item2",
+    label: "Rechercher",
   },
   {
     id: 3,
-    label: "item3",
+    label: "Playlist",
   },
   {
     id: 4,
-    label: "item4",
+    label: "Pause",
   },
   {
     id: 5,
-    label: "item5",
+    label: "Effacer 1",
   },
   {
     id: 6,
-    label: "item6",
+    label: "Stop",
   },
   {
     id: 7,
-    label: "item7",
+    label: "Effacer tout",
   },
   {
     id: 8,
-    label: "item8",
+    label: "suivant",
   },
 ];
 
-// const layoutConfig: LayoutConfigType = {
-//   2: {
-//     colSpan: 2,
-//   },
-//   5: {
-//     render: <Child1 />,
-//   },
-//   7: {
-//     rowSpan: 2,
-//     colSpan: 2,
-//   },
-// };
+const layoutConfig: LayoutConfigType = {
+  3: {
+    rowSpan: 4,
+  },
+};
 
 function App() {
   return (
@@ -62,7 +55,7 @@ function App() {
           gridContainerClassName={styles.container}
           gridClassName={styles.gridClassName}
           gridControlsClassName={styles.controlsContainer}
-          // layoutConfig={layoutConfig}
+          layoutConfig={layoutConfig}
           controls={<GridControls />}
         />
       </GridContextProvider>

@@ -18,7 +18,7 @@ function GridItem({ data, itemNumber, selected }: GridItemProps) {
         gridRow: data.rowSpan ? `span ${data.rowSpan}` : undefined,
       }}
     >
-      {data.render ?? "Grid Item"}
+      {data.render ?? data.label ?? "Grid Item"}
     </div>
   );
 }
