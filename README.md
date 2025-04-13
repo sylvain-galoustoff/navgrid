@@ -1,54 +1,131 @@
-# React + TypeScript + Vite
+# Composant React générateur de grille
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Le composant principal `GridNav` est conçu pour afficher des données - venant par exemple de votre backend - sous forme d'une grille CSS (en utilisant `display: grid`)**
 
-Currently, two official plugins are available:
+## Comment l'utiliser ?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Utilisez la props `data` pour passer les données au composant. Attention : vos objets _data_ **DOIVENT** inclure une clé _id_.
+- Utilisez la props `gridClassName` pour injecter la classe CSS qui configure votre grille
 
-## Expanding the ESLint configuration
+### Configurer la grille
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Vous pouvez configurer la disposition de la grille grâce à la props `layoutConfig` : passez un objet avec l'id de la data dont il faut modifier l'affichage afin qu'il s'étale sur plusieurs colonnes ou ligne de la grille, en utilisant `colSpan` et/ou `rowSpan`.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
+### Afficher vos composants
+
+passez vos composant en tant que `render` de l'objet de configuration : `GridNav` utilise un composant `GridItem` pour définir l'affichae de la grille, puis `GridItem` va rendre le composant que vous avez configuré.
+
+### Optionel : activez la navigation
+
+Il est possible de parcourir la grille avec une navigation en passant un composant de votre choix.
+Pour piloter la navigation, le système utilise un context React, il faudra donc envelopper le composant `GridNav` par `GridContextProvider` et passer le nombre de colonnes qui constitue votre grille en tant que props `columns`.
+
+Ensuite, votre composant de contrôle devra utiliser la fonction `changeItem` fournie par le contexte pour informer la grille du changement de l'objet sélectionné.
+
+## Exemple complet :
+
+**App.jsx**
+
+```
+const data = [
+  {
+    id: 1,
+    label: "Item 1",
   },
-})
+  {
+    id: 2,
+    label: "Item 2",
+  },
+  {
+    id: 3,
+    label: "Item 3 (Full height)",
+  },
+  {
+    id: 4,
+    label: "item 4",
+  },
+  {
+    id: 5,
+    label: "Item 5",
+  },
+  {
+    id: 6,
+    label: "Item 6 colspan 2",
+  },
+  {
+    id: 7,
+    label: "Item 7",
+  },
+];
+
+const layoutConfig = {
+  2: {
+    render: <Child1 />,
+  },
+  7: {
+    render: <Child2 />,
+  },
+  3: {
+    rowSpan: 4,
+  },
+  6: {
+    colSpan: 2,
+  },
+};
+
+function App() {
+  return (
+    <div className={styles.app}>
+      <GridContextProvider columns={3}>
+        <GridNav
+          data={data}
+          gridContainerClassName={styles.container}
+          gridClassName={styles.gridClassName}
+          gridControlsClassName={styles.controlsContainer}
+          layoutConfig={layoutConfig}
+          controls={<GridControls />}
+        />
+      </GridContextProvider>
+    </div>
+  );
+}
+
+export default App;
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
 ```
+.gridClassName {
+  flex: 1;
+  background-color: #d1d1d1;
+  padding: 10px;
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+```
+
+```
+function GridControls() {
+  const { changeItem } = useGridContext();
+
+  return (
+    <div className={styles.controls}>
+      <p onClick={() => changeItem("left")} className={styles.control}>
+        Gauche
+      </p>
+      <p onClick={() => changeItem("right")} className={styles.control}>
+        Droite
+      </p>
+      <p onClick={() => changeItem("up")} className={styles.control}>
+        Haut
+      </p>
+      <p onClick={() => changeItem("down")} className={styles.control}>
+        Bas
+      </p>
+    </div>
+  );
+}
+```
+
+![Exemple de grille](/screenshot.png "Exemple de grille")
