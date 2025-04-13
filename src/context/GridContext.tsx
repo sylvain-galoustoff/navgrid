@@ -36,51 +36,53 @@ export const GridContextProvider = ({
   const [data, setData] = useState<JSX.Element[]>([]);
   const [layoutConfig, setLayoutConfig] = useState<LayoutConfigType>({});
 
-  const getItemSpan = useCallback(
-    (index: number) => {
-      const id = index + 1;
-      const config = layoutConfig?.[id];
-      return {
-        rowSpan: config?.rowSpan || 1,
-        colSpan: config?.colSpan || 1,
-      };
-    },
-    [layoutConfig]
-  );
-
   const buildGridMap = useCallback(() => {
-    const gridMap: (number | null)[][] = [];
+    // Estimation du nombre de lignes (peut être ajustée si besoin)
+    const estimatedRows = Math.max(data.length, 10);
+    const grid: (number | null)[][] = Array.from({ length: estimatedRows }, () =>
+      Array(columns).fill(null)
+    );
+
     let index = 0;
-    let row = 0;
 
     while (index < data.length) {
-      if (!gridMap[row]) gridMap[row] = [];
+      const id = index + 1;
+      const config = layoutConfig?.[id];
+      const rowSpan = config?.rowSpan || 1;
+      const colSpan = config?.colSpan || 1;
 
-      let col = 0;
-      while (col < columns && index < data.length) {
-        if (gridMap[row][col] != null) {
-          col++;
-          continue;
-        }
+      // Trouver première case libre
+      let placed = false;
+      for (let r = 0; r < estimatedRows; r++) {
+        for (let c = 0; c < columns; c++) {
+          // Est-ce qu'on peut placer ici ?
+          let canPlace = true;
+          for (let dy = 0; dy < rowSpan; dy++) {
+            for (let dx = 0; dx < colSpan; dx++) {
+              if (grid[r + dy]?.[c + dx] != null) {
+                canPlace = false;
+              }
+            }
+          }
 
-        const { rowSpan, colSpan } = getItemSpan(index);
-
-        for (let r = 0; r < rowSpan; r++) {
-          if (!gridMap[row + r]) gridMap[row + r] = [];
-          for (let c = 0; c < colSpan; c++) {
-            gridMap[row + r][col + c] = r === 0 && c === 0 ? index + 1 : null;
+          if (canPlace) {
+            for (let dy = 0; dy < rowSpan; dy++) {
+              for (let dx = 0; dx < colSpan; dx++) {
+                grid[r + dy][c + dx] = id;
+              }
+            }
+            placed = true;
+            break;
           }
         }
-
-        col += colSpan;
-        index++;
+        if (placed) break;
       }
 
-      row++;
+      index++;
     }
 
-    return gridMap;
-  }, [data, columns, getItemSpan]);
+    return grid;
+  }, [data, columns, layoutConfig]);
 
   const changeItem = useCallback(
     (direction: DirectionType) => {
@@ -89,61 +91,49 @@ export const GridContextProvider = ({
       // Trouver la position actuelle
       let currentRow = -1;
       let currentCol = -1;
-
-      for (let r = 0; r < gridMap.length; r++) {
+      outer: for (let r = 0; r < gridMap.length; r++) {
         for (let c = 0; c < gridMap[r].length; c++) {
           if (gridMap[r][c] === selected) {
             currentRow = r;
             currentCol = c;
-            break;
+            break outer;
           }
         }
-        if (currentRow !== -1) break;
       }
+
+      if (currentRow === -1 || currentCol === -1) return;
 
       let newRow = currentRow;
       let newCol = currentCol;
+      let found = false;
 
-      switch (direction) {
-        case "up":
-          do {
+      const maxTries = gridMap.length * columns; // limite de sécurité
+
+      let tries = 0;
+      while (!found && tries < maxTries) {
+        switch (direction) {
+          case "up":
             newRow = newRow - 1 < 0 ? gridMap.length - 1 : newRow - 1;
-          } while (
-            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
-            newRow !== currentRow
-          );
-          break;
-
-        case "down":
-          do {
+            break;
+          case "down":
             newRow = (newRow + 1) % gridMap.length;
-          } while (
-            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
-            newRow !== currentRow
-          );
-          break;
-
-        case "left":
-          do {
+            break;
+          case "left":
             newCol = newCol - 1 < 0 ? columns - 1 : newCol - 1;
-          } while (
-            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
-            newCol !== currentCol
-          );
-          break;
-
-        case "right":
-          do {
+            break;
+          case "right":
             newCol = (newCol + 1) % columns;
-          } while (
-            (gridMap[newRow]?.[newCol] == null || gridMap[newRow][newCol] === selected) &&
-            newCol !== currentCol
-          );
-          break;
-      }
+            break;
+        }
 
-      const next = gridMap[newRow]?.[newCol];
-      if (next != null && next !== selected) setSelected(next);
+        const next = gridMap[newRow]?.[newCol];
+        if (next != null && next !== selected) {
+          found = true;
+          setSelected(next);
+        }
+
+        tries++;
+      }
     },
     [selected, data, columns, buildGridMap]
   );
