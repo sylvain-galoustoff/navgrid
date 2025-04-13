@@ -1,8 +1,13 @@
 .gridItem {
-  border: 2px solid aqua;
-
+  border: 5px solid transparent;
+  background-color: #a1a1a1;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gridItem.selected {
-  border-color: red;
+  border-color: rgb(61, 112, 179);
 }

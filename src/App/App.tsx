@@ -3,45 +3,52 @@ import GridNav from "../GridNav/GridNav";
 import { DataType, LayoutConfigType } from "../types";
 import GridControls from "../GridControls/GridControls";
 import { GridContextProvider } from "../context/GridContext";
+import Child1 from "../Components/Child1/Child1";
+import Child2 from "../Components/Child2/Child2";
 
 const data: DataType[] = [
   {
     id: 1,
-    label: "Play",
+    label: "Item 1",
   },
   {
     id: 2,
-    label: "Rechercher",
+    label: "Item 2",
   },
   {
     id: 3,
-    label: "Playlist",
+    label: "Item 3 (Full height)",
   },
   {
     id: 4,
-    label: "Pause",
+    label: "item 4",
   },
   {
     id: 5,
-    label: "Effacer 1",
+    label: "Item 5",
   },
   {
     id: 6,
-    label: "Stop",
+    label: "Item 6 colspan 2",
   },
   {
     id: 7,
-    label: "Effacer tout",
-  },
-  {
-    id: 8,
-    label: "suivant",
+    label: "Item 7",
   },
 ];
 
 const layoutConfig: LayoutConfigType = {
+  2: {
+    render: <Child1 />,
+  },
+  7: {
+    render: <Child2 />,
+  },
   3: {
     rowSpan: 4,
+  },
+  6: {
+    colSpan: 2,
   },
 };
 
