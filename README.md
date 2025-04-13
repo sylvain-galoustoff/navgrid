@@ -1,32 +1,32 @@
-# Composant React générateur de grille
+# React Grid Generator Component
 
-**Le composant principal `GridNav` est conçu pour afficher des données - venant par exemple de votre backend - sous forme d'une grille CSS (en utilisant `display: grid`)**
+**The main component `GridNav` is designed to display data – for example, from your backend – in the form of a CSS grid (using `display: grid`).**
 
-## Comment l'utiliser ?
+## How to use it?
 
-- Utilisez la props `data` pour passer les données au composant. Attention : vos objets _data_ **DOIVENT** inclure une clé _id_.
-- Utilisez la props `gridClassName` pour injecter la classe CSS qui configure votre grille
+- Use the `data` prop to pass your data to the component. Warning: your _data_ objects **MUST** include an _id_ key.
+- Use the `gridClassName` prop to inject the CSS class that sets up your grid layout.
 
-### Configurer la grille
+### Configure the grid
 
-Vous pouvez configurer la disposition de la grille grâce à la props `layoutConfig` : passez un objet avec l'id de la data dont il faut modifier l'affichage afin qu'il s'étale sur plusieurs colonnes ou ligne de la grille, en utilisant `colSpan` et/ou `rowSpan`.
+You can configure the layout of the grid using the `layoutConfig` prop: pass an object where the key is the id of the data item you want to modify, and define how many rows or columns it should span using `colSpan` and/or `rowSpan`.
 
-### Afficher vos composants
+### Display your components
 
-passez vos composant en tant que `render` de l'objet de configuration : `GridNav` utilise un composant `GridItem` pour définir l'affichae de la grille, puis `GridItem` va rendre le composant que vous avez configuré.
+Pass your components as `render` inside the configuration object: `GridNav` uses a `GridItem` component to define the grid display, and `GridItem` will then render the component you provided.
 
-### Optionel : activez la navigation
+### Optional: enable navigation
 
-Il est possible de parcourir la grille avec une navigation en passant un composant de votre choix.
-Pour piloter la navigation, le système utilise un context React, il faudra donc envelopper le composant `GridNav` par `GridContextProvider` et passer le nombre de colonnes qui constitue votre grille en tant que props `columns`.
+You can navigate through the grid using a control component of your choice.  
+To handle navigation, the system uses a React context, so you must wrap the `GridNav` component with `GridContextProvider` and pass the number of columns in your grid using the `columns` prop.
 
-Ensuite, votre composant de contrôle devra utiliser la fonction `changeItem` fournie par le contexte pour informer la grille du changement de l'objet sélectionné.
+Then, your control component should use the `changeItem` function provided by the context to inform the grid of the selected item change.
 
-## Exemple complet :
+## Full Example:
 
 **App.jsx**
 
-```
+```jsx
 const data = [
   {
     id: 1,
@@ -42,7 +42,7 @@ const data = [
   },
   {
     id: 4,
-    label: "item 4",
+    label: "Item 4",
   },
   {
     id: 5,
@@ -93,7 +93,9 @@ function App() {
 export default App;
 ```
 
-```
+**Configure grid with CSS**
+
+```css
 .gridClassName {
   flex: 1;
   background-color: #d1d1d1;
@@ -105,27 +107,19 @@ export default App;
 }
 ```
 
-```
+**GridControl.jsx**
+
+```jsx
 function GridControls() {
   const { changeItem } = useGridContext();
 
   return (
     <div className={styles.controls}>
-      <p onClick={() => changeItem("left")} className={styles.control}>
-        Gauche
-      </p>
-      <p onClick={() => changeItem("right")} className={styles.control}>
-        Droite
-      </p>
-      <p onClick={() => changeItem("up")} className={styles.control}>
-        Haut
-      </p>
-      <p onClick={() => changeItem("down")} className={styles.control}>
-        Bas
-      </p>
+      <p onClick={() => changeItem("left")}>LEFT</p>
+      <p onClick={() => changeItem("right")}>RIGHT</p>
+      <p onClick={() => changeItem("up")}>UP</p>
+      <p onClick={() => changeItem("down")}>DOWN</p>
     </div>
   );
 }
 ```
-
-![Exemple de grille](/screenshot.png "Exemple de grille")

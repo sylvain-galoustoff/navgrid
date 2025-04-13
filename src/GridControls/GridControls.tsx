@@ -7,16 +7,16 @@ function GridControls() {
   return (
     <div className={styles.controls}>
       <p onClick={() => changeItem("left")} className={styles.control}>
-        Gauche
+        LEFT
       </p>
       <p onClick={() => changeItem("right")} className={styles.control}>
-        Droite
+        RIGHT
       </p>
       <p onClick={() => changeItem("up")} className={styles.control}>
-        Haut
+        UP
       </p>
       <p onClick={() => changeItem("down")} className={styles.control}>
-        Bas
+        DOWN
       </p>
     </div>
   );
