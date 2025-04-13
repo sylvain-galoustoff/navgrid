@@ -59,7 +59,7 @@ const layoutConfig: LayoutConfigType = {
 function App() {
   return (
     <div className="app">
-      <GridContextProvider>
+      <GridContextProvider columns={3}>
         <GridNav
           data={data}
           gridClassName={styles.gridClassName}

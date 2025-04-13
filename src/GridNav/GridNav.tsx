@@ -13,7 +13,7 @@ type GridNavProps = {
 
 function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
-  const { selected, setData } = useGridContext();
+  const { selected, setData, setLayoutConfig } = useGridContext();
 
   useEffect(() => {
     setData(items);
@@ -21,6 +21,8 @@ function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) 
 
   useEffect(() => {
     if (layoutConfig) {
+      setLayoutConfig(layoutConfig); // <-- cette ligne synchronise la config avec le contexte
+
       const mergeDataConfig: DataType[] = data.map((item) => {
         const config = layoutConfig[item.id];
         return {
@@ -28,6 +30,7 @@ function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) 
           ...config,
         };
       });
+
       const renderItems = mergeDataConfig.map((item, index) => (
         <GridItem data={item} key={index} itemNumber={index + 1} selected={selected} />
       ));
