@@ -1,21 +1,22 @@
 .controls {
+  flex: 1;
   display: flex;
-  align-items: center;
   gap: 10px;
 }
 
 .control {
-  border: 1px solid #000;
-  height: 25px;
-  width: 70px;
+  cursor: pointer;
+  flex: 1;
+  background-color: #4d4d4d;
+  border-radius: 4px;
+  align-self: stretch;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  user-select: none;
+  font-weight: 900;
+  color: #fff;
 }
 
 .control:hover {
-  border-color: red;
-  color: red;
+  background-color: #616161;
 }

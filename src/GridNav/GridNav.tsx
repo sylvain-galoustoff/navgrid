@@ -7,11 +7,20 @@ import { useGridContext } from "../context/GridContext";
 type GridNavProps = {
   data: DataType[];
   gridClassName: keyof typeof styles;
+  gridContainerClassName?: keyof typeof styles;
+  gridControlsClassName?: keyof typeof styles;
   layoutConfig?: LayoutConfigType;
   controls?: React.ReactNode;
 };
 
-function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) {
+function GridNav({
+  data,
+  gridContainerClassName,
+  gridClassName,
+  gridControlsClassName,
+  layoutConfig,
+  controls,
+}: GridNavProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
   const { selected, setData, setLayoutConfig } = useGridContext();
 
@@ -44,9 +53,11 @@ function GridNav({ data, gridClassName, layoutConfig, controls }: GridNavProps) 
   }, [data, layoutConfig, selected]);
 
   return (
-    <div className={`${styles.gridNav} ${gridClassName}`}>
-      {items}
-      {controls && controls}
+    <div className={`${styles.gridNav} ${gridContainerClassName}`}>
+      <div className={`${styles.items} ${gridClassName}`}>{items}</div>
+      {controls && (
+        <div className={`${styles.controls} ${gridControlsClassName}`}>{controls}</div>
+      )}
     </div>
   );
 }

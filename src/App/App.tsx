@@ -40,27 +40,29 @@ const data: DataType[] = [
   },
 ];
 
-const layoutConfig: LayoutConfigType = {
-  2: {
-    colSpan: 2,
-  },
-  5: {
-    render: <Child1 />,
-  },
-  7: {
-    rowSpan: 2,
-    colSpan: 2,
-  },
-};
+// const layoutConfig: LayoutConfigType = {
+//   2: {
+//     colSpan: 2,
+//   },
+//   5: {
+//     render: <Child1 />,
+//   },
+//   7: {
+//     rowSpan: 2,
+//     colSpan: 2,
+//   },
+// };
 
 function App() {
   return (
-    <div className="app">
+    <div className={styles.app}>
       <GridContextProvider columns={3}>
         <GridNav
           data={data}
+          gridContainerClassName={styles.container}
           gridClassName={styles.gridClassName}
-          layoutConfig={layoutConfig}
+          gridControlsClassName={styles.controlsContainer}
+          // layoutConfig={layoutConfig}
           controls={<GridControls />}
         />
       </GridContextProvider>
