@@ -1,17 +1,33 @@
-export interface DataType {
-  id: number;
-  render?: React.ReactNode;
-  colSpan?: number;
-  rowSpan?: number;
-  [key: string]: string | number | boolean | React.ReactNode | undefined;
+// types.ts
+import { ReactNode } from "react";
+
+/**
+ * Toutes les données utilisées dans les grilles doivent avoir un ID unique.
+ */
+export interface BaseItem {
+	id: number;
 }
 
-export type LayoutItemType = {
-  render?: React.ReactNode;
-  colSpan?: number;
-  rowSpan?: number;
-};
+/**
+ * Options que la grille peut appliquer à un item :
+ * colonnes/hauteur/rendu personnalisé
+ */
+export interface LayoutOptions {
+	colSpan?: number;
+	rowSpan?: number;
+	render?: ReactNode;
+	payload?: Record<string, unknown>;
+}
 
-export type LayoutConfigType = {
-  [key: number]: LayoutItemType;
-};
+/**
+ * Un DataType est une donnée enrichie pour la grille.
+ * On peut lui passer une forme personnalisée T.
+ */
+export type DataType<T = Record<string, unknown>> = T &
+	BaseItem &
+	LayoutOptions;
+
+/**
+ * Permet de définir un layout spécifique à un ensemble d’ID.
+ */
+export type LayoutConfigType = Record<number, LayoutOptions>;
