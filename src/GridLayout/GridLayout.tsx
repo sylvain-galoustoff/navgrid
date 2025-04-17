@@ -3,21 +3,23 @@ import GridItem from "../GridItem/GridItem";
 import { DataType, LayoutConfigType } from "../types";
 import { useGridContext } from "../context/GridContext";
 
-type GridNavProps = {
+type GridLayoutProps = {
   data: DataType[];
   gridClassName?: string;
   gridContainerClassName?: string;
   gridControlsClassName?: string;
+  gridItemClassName?: string;
   layoutConfig?: LayoutConfigType;
 };
 
-function GridNav({
+function GridLayout({
   data,
   gridContainerClassName,
   gridClassName,
+  gridItemClassName,
   gridControlsClassName,
   layoutConfig,
-}: GridNavProps) {
+}: GridLayoutProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
   const { selected, setData, setLayoutConfig, changeItem } = useGridContext();
 
@@ -38,12 +40,24 @@ function GridNav({
       });
 
       const renderItems = mergeDataConfig.map((item, index) => (
-        <GridItem data={item} key={index} itemNumber={index + 1} selected={selected} />
+        <GridItem
+          data={item}
+          key={index}
+          itemNumber={index + 1}
+          gridItemClassName={gridItemClassName}
+          selected={selected}
+        />
       ));
       setItems(renderItems);
     } else {
       const renderItems = data.map((item, index) => (
-        <GridItem data={item} key={index} itemNumber={index + 1} selected={selected} />
+        <GridItem
+          data={item}
+          key={index}
+          itemNumber={index + 1}
+          gridItemClassName={gridItemClassName}
+          selected={selected}
+        />
       ));
       setItems(renderItems);
     }
@@ -62,4 +76,4 @@ function GridNav({
   );
 }
 
-export default GridNav;
+export default GridLayout;

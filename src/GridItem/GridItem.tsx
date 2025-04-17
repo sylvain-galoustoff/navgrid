@@ -1,16 +1,16 @@
 import { DataType } from "../types";
-import styles from "./GridItem.module.css";
 
 type GridItemProps = {
   data: DataType;
   itemNumber: number;
   selected?: number;
+  gridItemClassName?: string;
 };
 
-function GridItem({ data, itemNumber, selected }: GridItemProps) {
+function GridItem({ data, itemNumber, gridItemClassName, selected }: GridItemProps) {
   return (
     <div
-      className={`${styles.gridItem} ${itemNumber === selected ? styles.selected : ""}`}
+      className={`${gridItemClassName} ${itemNumber === selected ? selected : ""}`}
       style={{
         gridArea: data.area ?? undefined, // <-- Utilisation de area ici
       }}

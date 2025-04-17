@@ -1,9 +1,9 @@
 import styles from "./App.module.css";
-import GridNav from "../GridNav/GridNav";
 import { DataType, LayoutConfigType } from "../types";
 import { GridContextProvider } from "../context/GridContext";
 import Child1 from "../Components/Child1/Child1";
 import Child2 from "../Components/Child2/Child2";
+import GridLayout from "../GridLayout/GridLayout";
 
 const data: DataType[] = [
   {
@@ -60,7 +60,7 @@ function App() {
   return (
     <div className={styles.app}>
       <GridContextProvider columns={3}>
-        <GridNav
+        <GridLayout
           data={data}
           layoutConfig={layoutConfig}
           gridContainerClassName={styles.container}
