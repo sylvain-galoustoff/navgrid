@@ -27,7 +27,7 @@ export const GridContext = createContext<GridContextType>({
 
 export const GridContextProvider = ({
   children,
-  columns = 3,
+  columns = 3, // 👈 obligatoire pour savoir combien il y a d'éléments par ligne
 }: {
   children: ReactNode;
   columns: number;
@@ -38,24 +38,29 @@ export const GridContextProvider = ({
 
   const changeItem = useCallback(
     (direction: DirectionType) => {
-      const currentIndex = selected - 1;
+      if (data.length === 0) return;
 
+      const currentIndex = selected - 1;
       let newIndex = currentIndex;
 
       switch (direction) {
         case "left":
-        case "up":
           newIndex = (currentIndex - 1 + data.length) % data.length;
           break;
         case "right":
-        case "down":
           newIndex = (currentIndex + 1) % data.length;
+          break;
+        case "up":
+          newIndex = (currentIndex - columns + data.length) % data.length;
+          break;
+        case "down":
+          newIndex = (currentIndex + columns) % data.length;
           break;
       }
 
       setSelected(newIndex + 1);
     },
-    [selected, data.length]
+    [selected, data.length, columns]
   );
 
   const valueGridContext = {

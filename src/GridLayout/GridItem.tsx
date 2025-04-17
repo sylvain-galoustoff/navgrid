@@ -5,12 +5,21 @@ type GridItemProps = {
   itemNumber: number;
   selected?: number;
   gridItemClassName?: string;
+  gridItemSelectedClassName?: string;
 };
 
-function GridItem({ data, itemNumber, gridItemClassName, selected }: GridItemProps) {
+function GridItem({
+  data,
+  itemNumber,
+  selected,
+  gridItemClassName,
+  gridItemSelectedClassName,
+}: GridItemProps) {
   return (
     <div
-      className={`${gridItemClassName} ${itemNumber === selected ? selected : ""}`}
+      className={`${gridItemClassName} ${
+        itemNumber === selected ? gridItemSelectedClassName : ""
+      }`}
       style={{
         gridArea: data.area ?? undefined, // <-- Utilisation de area ici
       }}

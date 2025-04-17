@@ -64,8 +64,10 @@ function App() {
           data={data}
           layoutConfig={layoutConfig}
           gridContainerClassName={styles.container}
-          gridClassName={styles.gridClassName}
-          gridControlsClassName={styles.controlsContainer}
+          gridClassName={styles.grid}
+          gridItemClassName={styles.gridItem}
+          gridItemSelectedClassName={styles.selected}
+          gridControlsClassName={styles.controls}
         />
       </GridContextProvider>
     </div>

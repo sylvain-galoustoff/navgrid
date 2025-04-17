@@ -5,11 +5,13 @@ import { useGridContext } from "./GridContext";
 
 type GridLayoutProps = {
   data: DataType[];
-  gridClassName?: string;
-  gridContainerClassName?: string;
-  gridControlsClassName?: string;
-  gridItemClassName?: string;
+  gridClassName: string;
+  gridContainerClassName: string;
+  gridControlsClassName: string;
+  gridItemClassName: string;
+  gridItemSelectedClassName?: string;
   layoutConfig?: LayoutConfigType;
+  showControls?: boolean;
 };
 
 function GridLayout({
@@ -17,61 +19,50 @@ function GridLayout({
   gridContainerClassName,
   gridClassName,
   gridItemClassName,
+  gridItemSelectedClassName,
   gridControlsClassName,
   layoutConfig,
+  showControls = true,
 }: GridLayoutProps) {
   const [items, setItems] = useState<JSX.Element[]>([]);
   const { selected, setData, setLayoutConfig, changeItem } = useGridContext();
 
   useEffect(() => {
-    setData(items);
-  }, [items]);
-
-  useEffect(() => {
     if (layoutConfig) {
       setLayoutConfig(layoutConfig);
-
-      const mergeDataConfig: DataType[] = data.map((item) => {
-        const config = layoutConfig[item.id];
-        return {
-          ...item,
-          ...config,
-        };
-      });
-
-      const renderItems = mergeDataConfig.map((item, index) => (
-        <GridItem
-          data={item}
-          key={index}
-          itemNumber={index + 1}
-          gridItemClassName={gridItemClassName}
-          selected={selected}
-        />
-      ));
-      setItems(renderItems);
-    } else {
-      const renderItems = data.map((item, index) => (
-        <GridItem
-          data={item}
-          key={index}
-          itemNumber={index + 1}
-          gridItemClassName={gridItemClassName}
-          selected={selected}
-        />
-      ));
-      setItems(renderItems);
     }
+
+    const mergeDataConfig: DataType[] = data.map((item) => ({
+      ...item,
+      ...(layoutConfig ? layoutConfig[item.id] : {}),
+    }));
+
+    const renderItems = mergeDataConfig.map((item) => (
+      <GridItem
+        data={item}
+        key={item.id}
+        itemNumber={item.id}
+        gridItemClassName={gridItemClassName}
+        gridItemSelectedClassName={gridItemSelectedClassName}
+        selected={selected}
+      />
+    ));
+
+    setItems(renderItems);
+    setData(renderItems);
   }, [data, layoutConfig, selected]);
 
   return (
     <div className={gridContainerClassName ?? ""}>
       <div className={gridClassName ?? ""}>{items}</div>
-      <div className={gridControlsClassName ?? ""}>
-        <button onClick={() => changeItem("up")}>↑</button>
-        <button onClick={() => changeItem("left")}>←</button>
-        <button onClick={() => changeItem("right")}>→</button>
-        <button onClick={() => changeItem("down")}>↓</button>
-      </div>
+      {showControls && (
+        <div className={gridControlsClassName ?? ""}>
+          <button onClick={() => changeItem("up")}>↑</button>
+          <button onClick={() => changeItem("left")}>←</button>
+          <button onClick={() => changeItem("right")}>→</button>
+          <button onClick={() => changeItem("down")}>↓</button>
+        </div>
+      )}
     </div>
   );
 }
