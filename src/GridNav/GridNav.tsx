@@ -29,7 +29,7 @@ function GridNav({
     if (layoutConfig) {
       setLayoutConfig(layoutConfig);
 
-      const mergeDataConfig: DataType<T>[] = data.map((item) => {
+      const mergeDataConfig: DataType[] = data.map((item) => {
         const config = layoutConfig[item.id];
         return {
           ...item,
