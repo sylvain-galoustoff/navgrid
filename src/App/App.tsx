@@ -1,6 +1,6 @@
 import styles from "./App.module.css";
 import { DataType, LayoutConfigType } from "../types";
-import { GridContextProvider } from "../context/GridContext";
+import { GridContextProvider } from "../GridLayout/GridContext";
 import Child1 from "../Components/Child1/Child1";
 import Child2 from "../Components/Child2/Child2";
 import GridLayout from "../GridLayout/GridLayout";

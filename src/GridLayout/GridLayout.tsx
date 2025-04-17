@@ -1,7 +1,7 @@
 import { JSX, useEffect, useState } from "react";
-import GridItem from "../GridItem/GridItem";
+import GridItem from "./GridItem";
 import { DataType, LayoutConfigType } from "../types";
-import { useGridContext } from "../context/GridContext";
+import { useGridContext } from "./GridContext";
 
 type GridLayoutProps = {
   data: DataType[];
