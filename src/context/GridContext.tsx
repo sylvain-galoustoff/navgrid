@@ -1,4 +1,4 @@
-import { JSX, createContext, useCallback, useContext, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useState, ReactNode, JSX } from "react";
 import { LayoutConfigType } from "../types";
 
 type DirectionType = "left" | "right" | "up" | "down";
@@ -36,106 +36,26 @@ export const GridContextProvider = ({
   const [data, setData] = useState<JSX.Element[]>([]);
   const [layoutConfig, setLayoutConfig] = useState<LayoutConfigType>({});
 
-  const buildGridMap = useCallback(() => {
-    // Estimation du nombre de lignes (peut être ajustée si besoin)
-    const estimatedRows = Math.max(data.length, 10);
-    const grid: (number | null)[][] = Array.from({ length: estimatedRows }, () =>
-      Array(columns).fill(null)
-    );
-
-    let index = 0;
-
-    while (index < data.length) {
-      const id = index + 1;
-      const config = layoutConfig?.[id];
-      const rowSpan = config?.rowSpan || 1;
-      const colSpan = config?.colSpan || 1;
-
-      // Trouver première case libre
-      let placed = false;
-      for (let r = 0; r < estimatedRows; r++) {
-        for (let c = 0; c < columns; c++) {
-          // Est-ce qu'on peut placer ici ?
-          let canPlace = true;
-          for (let dy = 0; dy < rowSpan; dy++) {
-            for (let dx = 0; dx < colSpan; dx++) {
-              if (grid[r + dy]?.[c + dx] != null) {
-                canPlace = false;
-              }
-            }
-          }
-
-          if (canPlace) {
-            for (let dy = 0; dy < rowSpan; dy++) {
-              for (let dx = 0; dx < colSpan; dx++) {
-                grid[r + dy][c + dx] = id;
-              }
-            }
-            placed = true;
-            break;
-          }
-        }
-        if (placed) break;
-      }
-
-      index++;
-    }
-
-    return grid;
-  }, [data, columns, layoutConfig]);
-
   const changeItem = useCallback(
     (direction: DirectionType) => {
-      const gridMap = buildGridMap();
+      const currentIndex = selected - 1;
 
-      // Trouver la position actuelle
-      let currentRow = -1;
-      let currentCol = -1;
-      outer: for (let r = 0; r < gridMap.length; r++) {
-        for (let c = 0; c < gridMap[r].length; c++) {
-          if (gridMap[r][c] === selected) {
-            currentRow = r;
-            currentCol = c;
-            break outer;
-          }
-        }
+      let newIndex = currentIndex;
+
+      switch (direction) {
+        case "left":
+        case "up":
+          newIndex = (currentIndex - 1 + data.length) % data.length;
+          break;
+        case "right":
+        case "down":
+          newIndex = (currentIndex + 1) % data.length;
+          break;
       }
 
-      if (currentRow === -1 || currentCol === -1) return;
-
-      let newRow = currentRow;
-      let newCol = currentCol;
-      let found = false;
-
-      const maxTries = gridMap.length * columns; // limite de sécurité
-
-      let tries = 0;
-      while (!found && tries < maxTries) {
-        switch (direction) {
-          case "up":
-            newRow = newRow - 1 < 0 ? gridMap.length - 1 : newRow - 1;
-            break;
-          case "down":
-            newRow = (newRow + 1) % gridMap.length;
-            break;
-          case "left":
-            newCol = newCol - 1 < 0 ? columns - 1 : newCol - 1;
-            break;
-          case "right":
-            newCol = (newCol + 1) % columns;
-            break;
-        }
-
-        const next = gridMap[newRow]?.[newCol];
-        if (next != null && next !== selected) {
-          found = true;
-          setSelected(next);
-        }
-
-        tries++;
-      }
+      setSelected(newIndex + 1);
     },
-    [selected, data, columns, buildGridMap]
+    [selected, data.length]
   );
 
   const valueGridContext = {

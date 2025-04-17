@@ -1,7 +1,6 @@
 import styles from "./App.module.css";
 import GridNav from "../GridNav/GridNav";
 import { DataType, LayoutConfigType } from "../types";
-import GridControls from "../GridControls/GridControls";
 import { GridContextProvider } from "../context/GridContext";
 import Child1 from "../Components/Child1/Child1";
 import Child2 from "../Components/Child2/Child2";
@@ -29,26 +28,31 @@ const data: DataType[] = [
   },
   {
     id: 6,
-    label: "Item 6 colspan 2",
-  },
-  {
-    id: 7,
-    label: "Item 7",
+    label: "Item 6",
   },
 ];
 
 const layoutConfig: LayoutConfigType = {
+  1: {
+    area: "item1",
+  },
   2: {
+    area: "child1",
     render: <Child1 />,
   },
-  7: {
+  3: {
+    area: "sidebar",
+    render: <Child1 />,
+  },
+  4: {
+    area: "item4",
     render: <Child2 />,
   },
-  3: {
-    rowSpan: 4,
+  5: {
+    area: "item5",
   },
   6: {
-    colSpan: 2,
+    area: "item6",
   },
 };
 
@@ -58,11 +62,10 @@ function App() {
       <GridContextProvider columns={3}>
         <GridNav
           data={data}
+          layoutConfig={layoutConfig}
           gridContainerClassName={styles.container}
           gridClassName={styles.gridClassName}
           gridControlsClassName={styles.controlsContainer}
-          layoutConfig={layoutConfig}
-          controls={<GridControls />}
         />
       </GridContextProvider>
     </div>

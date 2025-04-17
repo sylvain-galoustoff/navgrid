@@ -10,12 +10,9 @@ type GridItemProps = {
 function GridItem({ data, itemNumber, selected }: GridItemProps) {
   return (
     <div
-      className={`${styles.gridItem} ${
-        itemNumber === selected ? styles.selected : undefined
-      }`}
+      className={`${styles.gridItem} ${itemNumber === selected ? styles.selected : ""}`}
       style={{
-        gridColumn: data.colSpan ? `span ${data.colSpan}` : undefined,
-        gridRow: data.rowSpan ? `span ${data.rowSpan}` : undefined,
+        gridArea: data.area ?? undefined, // <-- Utilisation de area ici
       }}
     >
       {data.render ?? data.label ?? "Grid Item"}
